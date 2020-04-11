@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kubernetes.io/change-cause: "Se crea el deploymenttest-02 y el servicetest-01"
+  name: deploymenttest-02
+  labels:
+    app: deptest-02
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: podtest-01
+  template:
+    metadata:
+      labels:
+        app: podtest-01
+    spec:
+      containers:
+      - name: container-01
+        image: nginx:alpine
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: servicetest-01
+  labels:
+    app: svctest-01
+spec:
+  type: ClusterIP
+  selector:
+    app: podtest-01
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
