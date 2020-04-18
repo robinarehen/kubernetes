@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingress-deploy
+  namespace:
+  labels:
+    app: front-dp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      labels:
+        app: front
+    spec:
+      containers:
+      - name: nginx-ctn
+        image: nginx:alpine
+        command: ["sh", "-c", "echo version 1.0 $HOSTNAME > /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-service
+  labels:
+    app: front-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: front
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
